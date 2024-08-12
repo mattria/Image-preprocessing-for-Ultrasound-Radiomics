@@ -1,0 +1,38 @@
+import cv2
+import os
+
+def ensure_directory_exists(directory):
+    """Ensure the output directory exists, create if it doesn't."""
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+def load_image_grayscale(image_path):
+    """Load an image in grayscale mode."""
+    image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
+    if image is None:
+        raise FileNotFoundError(f"Failed to load image: {image_path}")
+    return image
+
+def apply_clahe_and_save(image_path, output_path, clip_limit=0.9):
+    """
+    Apply CLAHE (with adjustable clip limit) to a grayscale image and save the result.
+
+    :param image_path: Path to the input image.
+    :param output_path: Path to save the enhanced image.
+    :param clip_limit: CLAHE clip limit (default is 0.9).
+    """
+    ensure_directory_exists(os.path.dirname(output_path))
+    image = load_image_grayscale(image_path)
+    height, width = image.shape
+    tile_size = 64  # Desired size of each tile
+    grid_size = (max(1, width // tile_size), max(1, height // tile_size))
+    clahe = cv2.createCLAHE(clipLimit=clip_limit, tileGridSize=grid_size)
+    clahe_image = clahe.apply(image)
+    cv2.imwrite(output_path, clahe_image)
+    print(f"Image enhanced and saved to: {output_path}")
+
+# Example usage
+if __name__ == "__main__":
+    input_image_path = 'input_images/example.jpg'
+    output_image_path = 'output_images/example_clahe_0.9.jpg'
+    apply_clahe_and_save(input_image_path, output_image_path)
