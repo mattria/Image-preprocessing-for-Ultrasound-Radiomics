@@ -34,3 +34,4 @@ The scripts require the following Python libraries:
 OpenCV (cv2) for image processing.
 OS (os) for handling file and directory operations.
 You can install OpenCV using pip
+This project is licensed under the MIT License.
